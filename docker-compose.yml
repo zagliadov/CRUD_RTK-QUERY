@@ -1,0 +1,36 @@
+version: '3.6'
+services:
+  RTKQueryClient:
+    image: node:latest
+    container_name: RTKQueryClient
+    working_dir: /app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - RTKQueryServer
+      - RTKQueryDB
+    command: npm start
+    volumes:
+      - ./client:/app
+  RTKQueryServer:
+    image: node:latest
+    container_name: RTKQueryServer
+    ports:
+      - '9001:9001'
+    depends_on:
+      - RTKQueryDB
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: npm run start:dev
+  
+  RTKQueryDB:
+    image: mongo:latest
+    environment: 
+      - MONGO_USER=admin
+      - MONGO_PASSWORD=admin
+      - MONGO_DB=RTKQueryDB
+    ports:
+      - "27017:27017" 
+    volumes: 
+      - ./data/database-data:/var/lib/mongo/data/
